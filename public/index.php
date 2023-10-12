@@ -28,3 +28,7 @@ if (file_exists($pageTemplate)) {
 
 // Include the common footer
 include __DIR__ . '/../private/Views/templates/footer.php';
+
+global $database;
+
+database::connect($database['host'], $database['user'], $database['password'], $database['database']);
