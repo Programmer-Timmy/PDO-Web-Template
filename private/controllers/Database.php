@@ -209,9 +209,11 @@ class Database
             $values = null;
         } else {
             $fieldQueries = [];
+            $i = 0;
             foreach ($fields as $field) {
                 $fieldQueries[] = $field . ' = ?';
-                $bindValues[] = $values[$field];
+                $bindValues[] = $values[$i];
+                $i++;
             }
             $fieldQuery = implode(' AND ', $fieldQueries);
         }

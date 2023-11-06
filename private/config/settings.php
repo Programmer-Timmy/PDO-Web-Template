@@ -14,8 +14,13 @@ $database = [
  */
 $site = [
     'siteName' => 'PDO Template',
+    'debug' => true,
+    'maintenance' => false
     ];
-
+/**
+ * Allowed IPs That can bypass the maintenance
+ */
+$allowedIPs = ['::1'];
 /**
  * Page Title Settings
  */
@@ -25,6 +30,7 @@ if ($url == '/') {
 }
 $titles = [
     'default' => substr($url, 1) . ' - ' . $site['siteName'],
+    'maintenance' => 'Under Maintenance -' . $site['siteName'],
     'home' => 'Home Page - ' . $site['siteName'],
     'about' => 'About Us - ' . $site['siteName'],
     'contact' => 'Contact Us - ' . $site['siteName'],
