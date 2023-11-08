@@ -3,6 +3,9 @@
 require_once __DIR__ . '/../private/autoload.php';
 require_once __DIR__ . '/../private/config/settings.php';
 
+// Start a session
+session_start();
+
 // Global variables
 global $site;
 global $database;
@@ -41,5 +44,13 @@ if ($site['maintenance'] && !in_array($_SERVER['REMOTE_ADDR'], $allowedIPs)) {
     // Connect to the database
     global $database;
     database::connect($database['host'], $database['user'], $database['password'], $database['database']);
+}
+
+if ($site['showPopup'] && !isset($_SESSION['popupShown'])) {
+    // Include your popup HTML or JavaScript code here
+    include __DIR__ . '/../private/Views/popups/popup.php';
+
+    // Set a session variable to remember that the popup has been shown
+    $_SESSION['popupShown'] = true;
 }
 ?>
