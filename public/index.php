@@ -86,10 +86,6 @@ if ($site['maintenance'] && !in_array($_SERVER['REMOTE_ADDR'], $allowedIPs)) {
 
     // Include the common footer
     include __DIR__ . '/../private/Views/templates/footer.php';
-
-    // Connect to the database
-    global $database;
-    database::connect($database['host'], $database['user'], $database['password'], $database['database']);
 }
 
 if ($site['showPopup'] && !isset($_SESSION['popupShown'])) {
