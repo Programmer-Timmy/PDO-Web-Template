@@ -13,9 +13,30 @@ $database = [
  * Site Settings
  */
 $site = [
+    // General settings
     'siteName' => 'PDO Template',
     'debug' => true,
     'maintenance' => false,
+
+    // Ajax settings
+    'ajax' => true,
+
+    // Admin settings
+    'admin' => [
+        'enabled' => true,
+        'sessionName' => 'admin', // the session name that will be used to store that the user is a admin
+        'redirect' => 'login', // redirect to this page if the user is not logged in
+    ],
+
+    // Accounts settings
+    'accounts'=>[
+        'enabled' => true,
+        'sessionName' => 'userId', // the session name that will be used to store that the user is logged in
+        'redirect' => 'login', // redirect to this page if the user is not logged in
+        'filterInUrl' => '', // empty string means no filter
+    ],
+
+    // popup settings
     'showPopup' => true,
     'popupTitle' => 'Note',
     'popupMessage' => 'This is a popup you can change it in the settings!',

@@ -11,6 +11,33 @@ global $site;
 global $database;
 global $allowedIPs;
 
+// Determine which page to display based on the request
+$requestedPage = $_SERVER['REQUEST_URI'];
+if ($requestedPage == "/") {
+    $requestedPage = 'home';
+}
+
+// remove the get parameters from the url
+$position = strpos($requestedPage, "?");
+$require = $requestedPage;
+if ($position !== false) {
+    $newString = substr($requestedPage, 0, $position);
+    $require = $newString; // Output: "Hello "
+}
+
+// check if ajax is enabled
+if ($site['ajax']) {
+    // check if the request is an ajax request
+    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        // include the requested page
+        include __DIR__ . "/../private/ajax/$require.php";
+        // stop executing the script
+        exit();
+    }
+}
+
+
+
 // Include header
 include __DIR__ . '/../private/Views/templates/header.php';
 
