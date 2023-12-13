@@ -25,18 +25,37 @@ if ($position !== false) {
     $require = $newString; // Output: "Hello "
 }
 
-// check if ajax is enabled
+// if ajax is enabled and the request is a ajax request load the ajax file
 if ($site['ajax']) {
-    // check if the request is an ajax request
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-        // include the requested page
         include __DIR__ . "/../private/ajax/$require.php";
-        // stop executing the script
         exit();
     }
 }
 
+if ($site['admin']['enabled']) {
+    $admin = $site['admin'];
+    if (strpos($require, $admin['filterInUrl']) !== false && $require !== $admin['redirect']) {
+        if (!isset($_SESSION[$admin['sessionName']])) {
+            if($admin['saveUrl']){
+                $_SESSION['redirect'] = $require;
+            }
+            header('Location:' . $admin['redirect']);
+        }
+    }
+}
 
+if ($site['accounts']['enabled']) {
+    $accounts = $site['accounts'];
+    if (strpos($require, $accounts['filterInUrl']) !== false && $require !== $accounts['redirect']) {
+        if (!isset($_SESSION[[$accounts]['sessionName']])) {
+            if($accounts['saveUrl']){
+                $_SESSION['redirect'] = $require;
+            }
+            header('Location:' . $accounts['redirect']);
+        }
+    }
+}
 
 // Include header
 include __DIR__ . '/../private/Views/templates/header.php';
@@ -62,7 +81,7 @@ if ($site['maintenance'] && !in_array($_SERVER['REMOTE_ADDR'], $allowedIPs)) {
         include $pageTemplate;
     } else {
         // Handle 404 or display a default page
-        header('Location: /404');
+//        header('Location: /404');
     }
 
     // Include the common footer

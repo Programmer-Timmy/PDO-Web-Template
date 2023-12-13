@@ -23,15 +23,18 @@ $site = [
 
     // Admin settings
     'admin' => [
-        'enabled' => true,
-        'sessionName' => 'admin', // the session name that will be used to store that the user is a admin
+        'enabled' => false,
+        'saveUrl' => true, // save the url in the session so you can redirect the user back to the page he was before he logged in
+        'sessionName' => 'admin', // the session name that will be used to store that the user is a admin check by isset function
         'redirect' => 'login', // redirect to this page if the user is not logged in
+        'filterInUrl' => 'admin', // empty string means no filter
     ],
 
     // Accounts settings
     'accounts'=>[
-        'enabled' => true,
-        'sessionName' => 'userId', // the session name that will be used to store that the user is logged in
+        'enabled' => false,
+        'saveUrl' => true, // save the url in the session so you can redirect the user back to the page he was before he logged in
+        'sessionName' => 'userId', // the session name that will be used to store that the user is logged in check by isset function
         'redirect' => 'login', // redirect to this page if the user is not logged in
         'filterInUrl' => '', // empty string means no filter
     ],
