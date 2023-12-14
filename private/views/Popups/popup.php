@@ -1,3 +1,6 @@
+<?php /** @noinspection PhpUndefinedVariableInspection */
+global $site
+?>
 <!-- Bootstrap Popup Modal -->
 <div class="modal" id="popupModal" tabindex="-1" aria-labelledby="popupModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -24,7 +27,7 @@
 <!-- JavaScript to show the popup when the page loads -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var popupModal = new bootstrap.Modal(document.getElementById('popupModal'));
+        const popupModal = new bootstrap.Modal(document.getElementById('popupModal'));
         popupModal.show();
     });
 </script>

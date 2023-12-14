@@ -10,6 +10,22 @@ $database = [
 ];
 
 /**
+ * email settings
+ */
+$email = [
+    'host' => 'smtp.gmail.com',
+    'SMTPAuth' => true,
+    'username' => '',
+    'password' => '',
+    'encryption' => 'tls', // tls or ssl
+    'port' => 587, // 587 or 465
+    'from' => [
+        'email' => '',
+        'name' => ''
+    ]
+];
+
+/**
  * Site Settings
  */
 $site = [
@@ -24,8 +40,8 @@ $site = [
     // Admin settings
     'admin' => [
         'enabled' => false,
-        'saveUrl' => true, // save the url in the session so you can redirect the user back to the page he was before he logged in
-        'sessionName' => 'admin', // the session name that will be used to store that the user is a admin check by isset function
+        'saveUrl' => true, // save the url in the session, so you can redirect the user back to the page he was before he logged in
+        'sessionName' => 'admin', // the session name that will be used to store that the user is an admin check by isset function
         'redirect' => 'login', // redirect to this page if the user is not logged in
         'filterInUrl' => 'admin', // empty string means no filter
     ],
@@ -33,7 +49,7 @@ $site = [
     // Accounts settings
     'accounts'=>[
         'enabled' => false,
-        'saveUrl' => true, // save the url in the session so you can redirect the user back to the page he was before he logged in
+        'saveUrl' => true, // save the url in the session, so you can redirect the user back to the page he was before he logged in
         'sessionName' => 'userId', // the session name that will be used to store that the user is logged in check by isset function
         'redirect' => 'login', // redirect to this page if the user is not logged in
         'filterInUrl' => '', // empty string means no filter
@@ -56,7 +72,7 @@ $site = [
 /**
  * Allowed IPs That can bypass the maintenance
  */
-$allowedIPs = ['::0']; // ['::0'] means all IP's are allowed
+$allowedIPs = ['::0']; // ['::0'] means all IPs are allowed
 
 /**
  * Page Title Settings

@@ -25,7 +25,7 @@ if ($position !== false) {
     $require = $newString; // Output: "Hello "
 }
 
-// if ajax is enabled and the request is a ajax request load the ajax file
+// if ajax is enabled and the request is an ajax request load the ajax file
 if ($site['ajax']) {
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
         include __DIR__ . "/../private/ajax/$require.php";
@@ -95,4 +95,4 @@ if ($site['showPopup'] && !isset($_SESSION['popupShown'])) {
     // Set a session variable to remember that the popup has been shown
     $_SESSION['popupShown'] = true;
 }
-?>
+
