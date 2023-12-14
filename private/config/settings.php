@@ -15,11 +15,11 @@ $database = [
 $site = [
     // General settings
     'siteName' => 'PDO Template',
-    'debug' => true,
-    'maintenance' => false,
+    'debug' => true, // shows errors if true
+    'maintenance' => false, // shows the maintenance page if true the client's IP is not in the allowedIPs array
 
-    // Ajax settings
-    'ajax' => true,
+    // ajax on or off
+    'ajax' => false, // if true the site will only load the ajax pages
 
     // Admin settings
     'admin' => [
@@ -45,8 +45,8 @@ $site = [
     'popupMessage' => 'This is a popup you can change it in the settings!',
     'popupButtons' => [
         [
-            'label' => 'Change button',
-            'action' => ''
+            'label' => 'Change button', // change the button label
+            'action' => '' // change the button link
         ],
         // Add more buttons as needed
     ]
@@ -56,7 +56,7 @@ $site = [
 /**
  * Allowed IPs That can bypass the maintenance
  */
-$allowedIPs = ['::0'];
+$allowedIPs = ['::0']; // ['::0'] means all IP's are allowed
 
 /**
  * Page Title Settings
@@ -75,6 +75,7 @@ $titles = [
     'about' => 'About Us - ' . $site['siteName'],
     'contact' => 'Contact Us - ' . $site['siteName'],
     '404' => '404 - Oops page not found!',
+    // Add more titles as needed
 ];
 
 // Disable errors if debug is set to false
