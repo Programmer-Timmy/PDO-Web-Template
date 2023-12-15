@@ -10,6 +10,22 @@ $database = [
 ];
 
 /**
+ * email settings
+ */
+$email = [
+    'host' => 'smtp.gmail.com',
+    'SMTPAuth' => true,
+    'username' => '',
+    'password' => '',
+    'encryption' => 'tls', // tls or ssl
+    'port' => 587, // 587 or 465
+    'from' => [
+        'email' => '',
+        'name' => ''
+    ]
+];
+
+/**
  * Site Settings
  */
 $site = [
@@ -57,7 +73,7 @@ $site = [
 /**
  * Allowed IPs That can bypass the maintenance
  */
-$allowedIPs = ['::0']; // ['::0'] means all IP's are allowed
+$allowedIPs = ['::0']; // ['::0'] means all IPs are allowed
 
 /**
  * Page Title Settings
