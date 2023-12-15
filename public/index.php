@@ -14,7 +14,7 @@ global $allowedIPs;
 // Determine which page to display based on the request
 $requestedPage = $_SERVER['REQUEST_URI'];
 if ($requestedPage == "/") {
-    $requestedPage = 'home';
+    $requestedPage = '/home';
 }
 
 // remove the get parameters from the url
@@ -35,24 +35,37 @@ if ($site['ajax']) {
 
 if ($site['admin']['enabled']) {
     $admin = $site['admin'];
-    if (strpos($require, $admin['filterInUrl']) !== false && $require !== $admin['redirect']) {
-        if (!isset($_SESSION[$admin['sessionName']])) {
-            if($admin['saveUrl']){
-                $_SESSION['redirect'] = $require;
+    $pageTemplate = __DIR__ . "/../private/Views/pages$require.php";
+
+    if (file_exists($pageTemplate)) {
+        if (str_contains($require, $admin['filterInUrl']) && $require !== $site['redirect'] && $require !== '/404' && $require !== '/maintenance') {
+            if (!isset($_SESSION[$admin['sessionName']])) {
+                if($site['saveUrl']){
+                    $_SESSION['redirect'] = $require;
+                }
+                header('Location:' . $admin['redirect']);
             }
-            header('Location:' . $admin['redirect']);
         }
     }
 }
 
 if ($site['accounts']['enabled']) {
     $accounts = $site['accounts'];
-    if (strpos($require, $accounts['filterInUrl']) !== false && $require !== $accounts['redirect']) {
-        if (!isset($_SESSION[[$accounts]['sessionName']])) {
-            if($accounts['saveUrl']){
-                $_SESSION['redirect'] = $require;
+
+    $pageTemplate = __DIR__ . "/../private/Views/pages$require.php";
+
+    if (file_exists($pageTemplate)) {
+        if (str_contains($require, $accounts['filterInUrl']) && $require !== '/' . $site['redirect'] && $require !== '/404' && $require !== '/maintenance') {
+
+            if (!isset($_SESSION[$accounts['sessionName']])) {
+                if ($site['saveUrl']) {
+                    if ($require !== '/' . $site['redirect']) {
+                        $_SESSION['redirect'] = $require;
+                    }
+                }
+
+                header('Location:' . $site['redirect']);
             }
-            header('Location:' . $accounts['redirect']);
         }
     }
 }
@@ -69,7 +82,7 @@ if ($site['maintenance'] && !in_array($_SERVER['REMOTE_ADDR'], $allowedIPs)) {
     include __DIR__ . '/../private/Views/templates/navbar.php';
 
     // Determine which page to display based on the request
-    $requestedPage = $_SERVER['REQUEST_URI'];
+    $requestedPage = $require;
     if ($requestedPage == "/") {
         $requestedPage = 'home';
     }
@@ -81,7 +94,7 @@ if ($site['maintenance'] && !in_array($_SERVER['REMOTE_ADDR'], $allowedIPs)) {
         include $pageTemplate;
     } else {
         // Handle 404 or display a default page
-//        header('Location: /404');
+        header('Location: /404');
     }
 
     // Include the common footer

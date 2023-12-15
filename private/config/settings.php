@@ -6,7 +6,7 @@ $database = [
     'host' => 'localhost',
     'user' => 'root',
     'password' => '',
-    'database' => 'cs',
+    'database' => 'recipe_sharing_platform',
 ];
 
 /**
@@ -21,21 +21,22 @@ $site = [
     // ajax on or off
     'ajax' => false, // if true the site will only load the ajax pages
 
+    // Auth settings
+    'user-adminTable' => 'users', // the table name that will be used to check if the user/admin exists
+    'saveUrl' => true, // save the url in the session, so you can redirect the user back to the page he was before he logged in
+    'redirect' => 'login', // redirect to this page if the user is not logged in
+
     // Admin settings
     'admin' => [
         'enabled' => false,
-        'saveUrl' => true, // save the url in the session so you can redirect the user back to the page he was before he logged in
         'sessionName' => 'admin', // the session name that will be used to store that the user is a admin check by isset function
-        'redirect' => 'login', // redirect to this page if the user is not logged in
         'filterInUrl' => 'admin', // empty string means no filter
     ],
 
     // Accounts settings
     'accounts'=>[
-        'enabled' => false,
-        'saveUrl' => true, // save the url in the session so you can redirect the user back to the page he was before he logged in
+        'enabled' => true,
         'sessionName' => 'userId', // the session name that will be used to store that the user is logged in check by isset function
-        'redirect' => 'login', // redirect to this page if the user is not logged in
         'filterInUrl' => '', // empty string means no filter
     ],
 
