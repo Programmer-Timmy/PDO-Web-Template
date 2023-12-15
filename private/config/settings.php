@@ -6,7 +6,7 @@ $database = [
     'host' => 'localhost',
     'user' => 'root',
     'password' => '',
-    'database' => 'recipe_sharing_platform',
+    'database' => '',
 ];
 
 /**
@@ -51,7 +51,7 @@ $site = [
 
     // Accounts settings
     'accounts'=>[
-        'enabled' => true,
+        'enabled' => false,
         'sessionName' => 'userId', // the session name that will be used to store that the user is logged in check by isset function
         'filterInUrl' => '', // empty string means no filter
     ],
