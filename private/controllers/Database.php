@@ -127,4 +127,11 @@ class Database
         $stmt = (new Database)->prepare($sql);
         $stmt->execute(array_values($where));
     }
+
+    public static function query(string $query, array $values = [])
+    {
+        $stmt = (new Database)->prepare($query);
+        $stmt->execute($values);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 }
