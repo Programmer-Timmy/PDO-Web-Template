@@ -1,0 +1,1 @@
+<?= GlobalUtility::createTable(Database::getAll('projects'), ['name', 'description', 'id', 'date'], false, true) ?>
