@@ -8,7 +8,6 @@ session_start();
 
 // Global variables
 global $site;
-global $database;
 global $allowedIPs;
 
 // Determine which page to display based on the request
@@ -94,7 +93,7 @@ if ($site['maintenance'] && !in_array($_SERVER['REMOTE_ADDR'], $allowedIPs)) {
         include $pageTemplate;
     } else {
         // Handle 404 or display a default page
-        header('Location: /404');
+        include __DIR__ . '/../private/Views/pages/404.php';
     }
 
     // Include the common footer
