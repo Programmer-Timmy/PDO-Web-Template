@@ -32,10 +32,10 @@ $site = [
     // General settings
     'siteName' => 'PDO Template',
     'debug' => true, // shows errors if true
-    'maintenance' => false, // shows the maintenance page if true the client's IP is not in the allowedIPs array
+    'maintenance' => false, // shows the maintenance page if true and when the client's IP is not in the allowedIPs array
 
     // ajax on or off
-    'ajax' => false, // if true the site will only load the ajax pages
+    'ajax' => false, // if true the site will will load ajax pages on ajax requests
 
     // Auth settings
     'user-adminTable' => 'users', // the table name that will be used to check if the user/admin exists
