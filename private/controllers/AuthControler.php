@@ -2,10 +2,10 @@
 
 class AuthControler
 {
-    public static function login(string $username, string $password)
+    public static function login(string $username, #[\SensitiveParameter] string $password)
     {
         global $site;
-        $user = Database::get($site['user-adminTable'], ['*'], [], ['username' => $username]);
+        $user = Database::get(table: $site['user-adminTable'], where:['username' => $username]);
         if (!$user) {
             return null;
             exit();
