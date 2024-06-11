@@ -5,5 +5,3 @@
  * This is the home page of the website
  *
  */
-
-new
