@@ -2,7 +2,7 @@
 /**
  * Database Settings
  */
-$database = [
+$databaseSettings = [
     'host' => 'localhost',
     'user' => 'root',
     'password' => '',

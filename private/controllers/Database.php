@@ -1,31 +1,64 @@
 <?php
+global $databaseSettings;
 
+/**
+ * Class Database
+ * 
+ * This class is used to interact with the database using PDO 
+ */
 class Database
 {
-    private PDO $connection;
-    private string $host;
-    private string $user;
-    private string $password;
-    private string $database;
-    function __construct()
+    public PDO $connection;
+    private string $host = $databaseSettings['host'];
+    private string $user = $databaseSettings['user'];
+    #[\SensitiveParameterValue()] private string $password = $databaseSettings['password'];
+    private string $database = $databaseSettings['database'];
+
+    /**
+     * Database constructor.
+     * 
+     * This constructor is used to connect to the database
+     * 
+     * Example:
+     * $database = new Database();
+     * $database = new Database(host: 'YOUR_HOST', user: 'YOUR_USER', password: 'YOUR_PASSWORD', database: 'YOUR_DATABASE');
+     * 
+     * This will connect to the database using the default values from the config file or the values you provided
+     * 
+     * @param string|null $host the host of the database
+     * @param string|null $user the user of the database
+     * @param string|null $password the password of the database (is a sensitive parameter, so it will be hidden in the logs)
+     * @param string|null $database the name of the database
+     * 
+     * @return void 
+     */
+    function __construct(string|null $host = null, string|null $user = null, #[\SensitiveParameter()] string|null $password = null, string|null $database = null)
     {
-        global $database;
-        $this->host = $database['host'];
-        $this->user = $database['user'];
-        $this->password = $database['password'];
-        $this->database = $database['database'];
+        // If the host, user, password or database is not set, use the default values from the config file
+        $this->host = $host ?? $this->host;
+        $this->user = $user ?? $this->user;
+        $this->password = $password ?? $this->password;
+        $this->database = $database ?? $this->database;
 
         self::connect($this->host, $this->user, $this->password, $this->database);
     }
 
     /**
-     * @param $host
-     * @param $user
-     * @param $password
-     * @param $database
+     * This function is used to connect to the database
+     * 
+     * Example:
+     * $database->connect(host: 'YOUR_HOST', user: 'YOUR_USER', password: 'YOUR_PASSWORD', database: 'YOUR_DATABASE');
+     * 
+     * Note: This function is called automatically when the class is instantiated. You don't need to call it manually.
+     * 
+     * @param $host the host of the database
+     * @param $user the user of the database
+     * @param $password the password of the database (is a sensitive parameter, so it will be hidden in the logs)
+     * @param $database the name of the database
+     * 
      * @return void
      */
-    function connect(string $host, string $user, string $password, string $database)
+    private function connect(string $host, string $user, #[\SensitiveParameter()] string $password, string $database): void
     {
         $this->connection = new PDO("mysql:host=$host;dbname=$database", $user, $password);
     }
@@ -38,12 +71,37 @@ class Database
      * 
      * This will prepare a query to get all users with id 1
      * 
-     * @param $sql
-     * @return mixed
+     * Note: This function is used internally. You don't need to call it manually.
+     * 
+     * @param $sql the query to prepare
+     * 
+     * @return \PDOStatement|false the prepared statement
      */
-    function prepare(string $sql)
+    private function prepare(string $sql): \PDOStatement|false
     {
         return $this->connection->prepare($sql);
+    }
+
+    /**
+     * This function is used to execute a query
+     * 
+     * Example:
+     * Database::execute("INSERT INTO users (name, email) VALUES (?, ?)", ['John Doe', 'John.doe@gmail.com']);
+     *
+     * @param string $sql 
+     * @param array $values
+     * 
+     * @return \PDOStatement the executed statement
+     */
+    private function execute(string $sql, array $values): \PDOStatement
+    {
+        try{
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+            return $stmt;
+        } catch (PDOException $e) {
+            throw new ErrorException("Error: " . $e->getMessage() . "SQL: $sql");
+        }
     }
 
     /**
@@ -52,10 +110,9 @@ class Database
      * Example:
      * $lastInsertId = Database::lastInsertId();
      * 
-     * This will return the last inserted ID
-     * @return mixed
+     * @return string|false the last inserted ID
      */
-    function lastInsertId()
+    public function lastInsertId(): string|false
     {
         return $this->connection->lastInsertId();
     }
@@ -64,18 +121,18 @@ class Database
      * This function is used to insert data into the database
      * 
      * Example:
-     * Database::insert('users', ['name', 'email'], ['John Doe', 'john.doe@gmail.com']);
+     * Database::insert(table: 'users', columns: ['name', 'email'], values: ['John Doe', 'Jhon.doe@gmail.com']);
      * 
      * This will insert a new user into the users table with name John Doe and email
      * 
-     * @param string $table
-     * @param array $columns
-     * @param array $values
-     * @return void | int
-     * @throws ErrorException
+     * @param string $table The table to insert the data into
+     * @param array $columns Array of columns to insert the data into
+     * @param array $values Array of values to insert into the columns
+     * 
+     * @return void
      */
-    public static function insert(string $table, array $columns, array $values, $connection = (new Database))
-    {// use foreach use ani sql injection use ?
+    public function insert(string $table, array $columns, array $values): void
+    {
         $sql = "INSERT INTO $table (";
         foreach ($columns as $column) {
             $sql .= "$column, ";
@@ -88,39 +145,35 @@ class Database
         $sql = substr($sql, 0, -1);
         $sql .= ")";
         $sql = htmlspecialchars($sql);
-        $stmt = $connection->prepare($sql);
-        try {
-            $stmt->execute($values);
-            // Get the last inserted ID
-            $lastInsertId = $connection->lastInsertId();
-            return $lastInsertId;
-        } catch (Exception $e) {
-            // Construct error message including SQL query and values
-            $errorMessage = "Error executing SQL query: " . $stmt->queryString . ". Values: " . json_encode($values) . ". Exception: " . $e->getMessage();
 
-            throw new ErrorException($errorMessage);
-        }
+        $this->execute($sql, $values);
     }
 
     /**
      * This function is used to get data from the database
      * 
-     * Example:
-     * Database::get('users', ['name', 'email'], [], ['id' => 1]);
-     * This will return the name and email of the user with id 1
-     * Database::get('users', ['name', 'email'], [], ['id' => 1], 'name DESC');
-     * This will return the name and email of the user with id 1 ordered by name in descending order
-     * Databse::get('users', ['name', 'email'], ['user_roles' => 'users.role_id = user_roles.id'], ['users.id' => 1]);
-     * This will return the name and email of the user with id 1 with a join on user_roles table
+     * Examples:
+     *  $database->getAll(table: 'users');
+     *  This will return all users
      * 
-     * @param string $table
-     * @param array $columns
-     * @param $join
-     * @param array $where
-     * @param string $orderBy
-     * @return mixed
+     *  $database->getAll(table: 'users', columns: ['name', 'email'], where: ['id' => 1]);
+     *  This will return the name and email of the user with id 1
+     * 
+     *  $database->getAll(table: 'users', columns: ['name', 'email'], where: ['id' => 1], orderBy: 'name DESC');
+     *  This will return the name and email of the user with id 1 ordered by name in descending order
+     * 
+     *  $database->getAll(table: 'users', columns: ['name', 'email'], join: ['user_roles' => 'users.role_id = user_roles.id'], where: ['users.id' => 1]);
+     *  This will return the name and email of the user with id 1 with a join on user_roles table
+     * 
+     * @param string $table The table to get the data from
+     * @param array $columns Array of columns to get the data from
+     * @param array $join Array of tables to join ['table' => 'on']
+     * @param array $where Array of columns and values to filter the data
+     * @param string $orderBy The column to order the data by
+     * 
+     * @return object|false
      */
-    public static function getAll(string $table, array $columns = ['*'],$join = [], array $where = [], string $orderBy = '')
+    public function getAll(string $table, array $columns = ['*'],array $join = [], array $where = [], string $orderBy = ''): array|false
     {
         $sql = "SELECT ";
         foreach ($columns as $column) {
@@ -141,8 +194,8 @@ class Database
         if (!empty($orderBy)) {
             $sql .= " ORDER BY $orderBy";
         }
-        $stmt = (new Database)->prepare($sql);
-        $stmt->execute(array_values($where));
+        
+        $stmt = $this->execute($sql, array_values($where));
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
@@ -150,21 +203,27 @@ class Database
      * This function is used to get a single row from the database
      * 
      * Examples:
-     * Database::get('users', ['name', 'email'], [], ['id' => 1]);
-     *  This will return the name and email of the user with id 1
-     * Database::get('users', ['name', 'email'], [], ['id' => 1], 'name DESC');
-     *  This will return the name and email of the user with id 1 ordered by name in descending order
-     * Databse::get('users', ['name', 'email'], ['user_roles' => 'users.role_id = user_roles.id'], ['users.id' => 1]);
-     *  This will return the name and email of the user with id 1 with a join on user_roles table
+     * $database->get(table: 'users');
+     * This will return the first user
      * 
-     * @param string $table
-     * @param array $columns
-     * @param $join
-     * @param array $where
-     * @param string $orderBy
-     * @return mixed
+     * $database->get(table: 'users', columns: ['name', 'email'], where: ['id' => 1]);
+     * This will return the name and email of the user with id 1
+     * 
+     * $database->get(table: 'users', columns: ['name', 'email'], where: ['id' => 1], orderBy: 'name DESC');
+     * This will return the name and email of the user with id 1 ordered by name in descending order
+     * 
+     * $database->get(table: 'users', columns: ['name', 'email'], join: ['user_roles' => 'users.role_id = user_roles.id'], where: ['users.id' => 1]);
+     * This will return the name and email of the user with id 1 with a join on user_roles table
+     * 
+     * @param string $table The table to get the data from
+     * @param array $columns Array of columns to get the data from
+     * @param array $join Array of tables to join ['table' => 'on']
+     * @param array $where Array of columns and values to filter the data
+     * @param string $orderBy The column to order the data by
+     * 
+     * @return object|false
      */
-    public static function get(string $table, array $columns = ['*'],$join = [], array $where = [], string $orderBy = '')
+    public function get(string $table, array $columns = ['*'], array $join = [], array $where = [], string $orderBy = ''): object|false
     {
         $sql = "SELECT ";
         foreach ($columns as $column) {
@@ -185,7 +244,7 @@ class Database
         if (!empty($orderBy)) {
             $sql .= " ORDER BY $orderBy";
         }
-        $stmt = (new Database)->prepare($sql);
+        $stmt = $this->prepare($sql);
         $stmt->execute(array_values($where));
         return $stmt->fetchobject();
     }
@@ -194,18 +253,18 @@ class Database
      * This function is used to update data in the database
      * 
      * Example:
-     * Database::update('users', ['name', 'email'], ['John Doe', 'john.doe@gmail.com'], ['id' => 1]);
+     * $database->update(table: 'users', columns: ['name', 'email'], values: ['John Doe', 'John.doe@gmail.com'], where: ['id' => 1]);
      * 
      * This will update the name and email of the user with id 1
      * 
-     * @param string $table
-     * @param array $columns
-     * @param array $values
-     * @param array $where
-     * @param Database $database
+     * @param string $table The table to update the data in
+     * @param array $columns Array of columns to update the data in
+     * @param array $values Array of values to update in the columns
+     * @param array $where Array of columns and values to filter the data
+     * 
      * @return void
      */
-    public static function update(string $table, array $columns, array $values, array $where, Database $database = new Database)
+    public function update(string $table, array $columns, array $values, array $where)
     {
         $sql = "UPDATE $table SET ";
         foreach ($columns as $column) {
@@ -218,23 +277,22 @@ class Database
         }
         $sql = substr($sql, 0, -5);
         $sql = htmlspecialchars($sql);
-        $stmt = $database->prepare($sql);
-        $stmt->execute(array_merge($values, array_values($where)));
+        $this->execute($sql, array_merge($values, array_values($where)));
     }
 
     /**
      * This function is used to delete data from the database
      * 
      * Example:
-     * Database::delete('users', ['id' => 1]);
+     * $database->delete(table: 'users', where: ['id' => 1]);
      * 
      * This will delete the user with id 1
      *  
-     * @param string $table
-     * @param array $where
-     * @return void
+     * @param string $table The table to delete the data from
+     * @param array $where Array of columns and values to filter the data
+     * @return void 
      */
-    public static function delete(string $table, array $where, Database $database = new Database)
+    public function delete(string $table, array $where,): void
     {
         $sql = "DELETE FROM $table WHERE ";
         foreach ($where as $column => $value) {
@@ -242,29 +300,30 @@ class Database
         }
         $sql = substr($sql, 0, -5);
         $sql = htmlspecialchars($sql);
-        $stmt = $database->prepare($sql);
-        $stmt->execute(array_values($where));
+        $this->execute($sql, array_values($where));
+
     }
 
     /**
      * This function is used to run custom queries
      * 
      * Example:
-     * $users = Database::query("SELECT * FROM users WHERE id = ?", [1]);
+     * $database->query("SELECT * FROM users WHERE id = ?", [1]);
      * 
      * This will return all users with id 1
      * 
      * Note: If you want to use more functions of pdo before or after the query, you can pass the database object in $database
      * 
-     * @param string $query
-     * @param array $values
-     * @param Database $database
-     * @return mixed
+     * @param string $query The query to run
+     * @param array $values The values to bind to the query
+     * 
+     * @return array|false
      */
-    public static function query(string $query, array $values = [], Database $database = new Database)
+    public function query(string $query, array $values = []): array|false
     {
-        $stmt = $database->prepare($query);
-        $stmt->execute($values);
+        $values = array_map('htmlspecialchars', $values);
+
+        $stmt = $this->execute($query, $values);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
@@ -274,18 +333,14 @@ class Database
      * If one query fails, the entire transaction can be rolled back by using Database::rollBack($database)
      * 
      * Example:
-     * $database = Database::beginTransaction();
+     * $database->beginTransaction();
      * 
      * This will begin a transaction
      * 
-     * @return Database
      */
-    public static function beginTransaction()
+    public function beginTransaction()
     {
-        $database = new Database;
-        $database->connection->beginTransaction();
-
-        return $database;
+        $this->connection->beginTransaction();
     }
 
     /**
@@ -294,16 +349,15 @@ class Database
      * If one query fails, the entire transaction can be rolled back by using Database::rollBack($database)
      * 
      * Example:
-     * Database::commit($database);
+     * $database->commit();
      * 
      * This will commit the transaction
      * 
-     * @param Database $database
      * @return void
      */
-    public static function commit(Database $database)
+    public function commit()
     {
-        $database->connection->commit();
+        $this->connection->commit();
     }
 
     /**
@@ -312,15 +366,14 @@ class Database
      * If one query fails, the entire transaction can be rolled back by using Database::rollBack($database)
      * 
      * Example:
-     * Database::rollBack($database);
+     * $database->rollBack();
      * 
      * This will roll back the transaction
      * 
-     * @param Database $database
      * @return void
      */
-    public static function rollBack(Database $database)
+    public function rollBack()
     {
-        $database->connection->rollBack();
+        $this->connection->rollBack();
     }
 }
