@@ -1,4 +1,5 @@
 <?php
+namespace App\Controllers;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -9,6 +10,7 @@ require '../static/phpmailer/src/SMTP.php';
 
 class Mailer
 {
+    
 
     public static function sendEmail($to, $subject, $body)
     {

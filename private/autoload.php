@@ -1,17 +1,22 @@
 <?php
 spl_autoload_register(/**
- * @throws Exception
- */
-function ($className) {
-    $classFile = ucfirst(str_replace('\\', '/', $className) . '.php');
-
-    // Check if the class file exists in Controllers or Managers
-    if (file_exists(__DIR__ . '/Controllers/' . $classFile)) {
-    require __DIR__ . '/Controllers/' . $classFile;
-    } elseif (file_exists(__DIR__ . '/Managers/' . $classFile)) {
-    require __DIR__ . '/Managers/' . $classFile;
-    } else {
-        // If the class file doesn't exist, throw an error
-        throw new Exception("Class $className not found in " . __DIR__ . '/Controllers/' . $classFile, 500, null);
-    }
-});
+    * @throws Exception
+    */
+   function ($className) {
+       // Replace namespace separators with directory separators and ensure proper case
+       $classFile = str_replace('\\', '/', $className) . '.php';
+   
+       // Check if the class file exists in Controllers or Managers
+       $controllersPath = __DIR__ . '/Controllers/' . $classFile;
+       $managersPath = __DIR__ . '/Managers/' . $classFile;
+   
+       if (file_exists($controllersPath)) {
+           require $controllersPath;
+       } elseif (file_exists($managersPath)) {
+           require $managersPath;
+       } else {
+           // If the class file doesn't exist, throw an error
+           throw new Exception("Class $className not found in $controllersPath or $managersPath", 500);
+       }
+   });
+   

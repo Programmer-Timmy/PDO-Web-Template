@@ -1,6 +1,11 @@
 <?php
-global $databaseSettings;
+namespace App\Controllers;
 
+use PDO;
+use PDOException;
+use ErrorException;
+
+global $databaseSettings;
 /**
  * Class Database
  * 

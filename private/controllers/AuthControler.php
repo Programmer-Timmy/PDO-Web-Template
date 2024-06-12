@@ -1,5 +1,5 @@
 <?php
-
+namespace App\Controllers;
 class AuthControler
 {
     public static function login(string $username, #[\SensitiveParameter] string $password)
