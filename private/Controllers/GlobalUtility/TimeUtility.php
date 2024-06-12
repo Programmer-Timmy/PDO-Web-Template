@@ -30,7 +30,7 @@ class TimeUtility
      * 
      * @return string The current time.
      */
-    public static function getCurrentTime(string $format = 'd-m-Y H:i:s', string $timezone = 'Europe/Amsterdam'): string
+    public static function getCurrentTime(string $format = 'H:i:s', string $timezone = 'Europe/Amsterdam'): string
     {
         $now = new DateTime('now', new DateTimeZone($timezone));
         return $now->format($format);

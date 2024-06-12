@@ -61,7 +61,7 @@ class TableSettings{
  * @property array $table The data to display in the table
  * @property TableSettings $tableSettings The settings for the table
  */
-class Table{
+class TableUtility{
     private array $table;
     private TableSettings $tableSettings;
 
@@ -85,7 +85,7 @@ class Table{
      * @return string The headers for the table
      */
     private function generateHeaders(): string{
-        $table = '<thead><tr>';
+        $table = $this->tableSettings->bootstrap ? '<thead class="table-dark">' : '<thead>';
         if (!empty($this->table)) {
             // Loop through the columns
             foreach (get_object_vars($this->table[0]) as $column => $value) {

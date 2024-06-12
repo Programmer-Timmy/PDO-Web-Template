@@ -1,12 +1,13 @@
 <?php
 namespace App\Controllers\GlobalUtility;
 
+
 use DateTime;
 
 /**
  * A utility class for date operations
  */
-class DateUtility
+class DateUtility  
 {
     /**
      * Calculate the time difference between the current time and a given time.

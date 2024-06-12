@@ -10,14 +10,15 @@ global $databaseSettings;
  * Class Database
  * 
  * This class is used to interact with the database using PDO 
+ * 
  */
 class Database
 {
     public PDO $connection;
-    private string $host = $databaseSettings['host'];
-    private string $user = $databaseSettings['user'];
-    #[\SensitiveParameterValue()] private string $password = $databaseSettings['password'];
-    private string $database = $databaseSettings['database'];
+    private string $host;
+    private string $user;
+    private string $password;
+    private string $database;
 
     /**
      * Database constructor.
@@ -34,18 +35,27 @@ class Database
      * @param string|null $user the user of the database
      * @param string|null $password the password of the database (is a sensitive parameter, so it will be hidden in the logs)
      * @param string|null $database the name of the database
+     * @param bool $useSQLite whether to use SQLite or not. This is used for testing purposes
      * 
      * @return void 
      */
-    function __construct(string|null $host = null, string|null $user = null, #[\SensitiveParameter()] string|null $password = null, string|null $database = null)
+    function __construct(string|null $host = null, string|null $user = null, #[\SensitiveParameter()] string|null $password = null, string|null $database = null, $useSQLite = false)
     {
+        global $databaseSettings;
+        
         // If the host, user, password or database is not set, use the default values from the config file
-        $this->host = $host ?? $this->host;
-        $this->user = $user ?? $this->user;
-        $this->password = $password ?? $this->password;
-        $this->database = $database ?? $this->database;
+        $this->host = $host ?? $databaseSettings['host'];
+        $this->user = $user ?? $databaseSettings['user'];
+        $this->password = $password ?? $databaseSettings['password'];
+        $this->database = $database ?? $databaseSettings['database'];
 
-        self::connect($this->host, $this->user, $this->password, $this->database);
+        if ($useSQLite) {
+
+            $this->connection = new PDO('sqlite::memory:');
+        } else {
+
+            self::connect($this->host, $this->user, $this->password, $this->database);
+        }
     }
 
     /**
