@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutOutputDuringTests="true"
+         verbose="true">
+
+    <testsuites>
+        <testsuite name="Project Test Suite">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">private/Controllers</directory>
+        </include>
+    </coverage>
+
+    <logging>
+        <log type="coverage-html" target="coverage/html"/>
+        <log type="coverage-clover" target="coverage/clover.xml"/>
+        <log type="coverage-php" target="coverage/coverage.php"/>
+    </logging>
+
+</phpunit>

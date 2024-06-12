@@ -18,7 +18,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "test": "phpunit tests --coverage-html html"
+        "test": "phpunit tests --coverage-html coverage/html"
     },
     "license": "MIT"
 }

@@ -4,10 +4,6 @@ namespace App\Controllers;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '../static/phpmailer/src/Exception.php';
-require '../static/phpmailer/src/PHPMailer.php';
-require '../static/phpmailer/src/SMTP.php';
-
 class Mailer
 {
     
